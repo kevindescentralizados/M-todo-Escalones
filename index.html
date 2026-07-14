@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Método de Escalones — Descentralizados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Brand kit Descentralizados */
+    --blue:      #FF5C39;   /* Primario -> Persimon */
+    --red:       #C43C1E;   /* Acento -> Persimon oscuro */
+    --blue-lt:   #FFEEE9;   /* Fondo tags primario */
+    --red-lt:    #FBE7E0;   /* Fondo badges acento */
+    --blue-mid:  rgba(255,92,57,0.22);
+    --red-mid:   rgba(196,60,30,0.22);
+
+    /* Neutros - Purple Noir como títulos oscuros */
+    --dark:      #141015;
+    --mid:       #4a4550;
+    --light:     #928c99;
+    --bg:        #f7f5f4;
+    --white:     #ffffff;
+    --border:    #e6e2e8;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  body{
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: var(--bg);
+    color: var(--mid);
+  }
+
+  /* NAV */
+  nav{
+    position: sticky; top:0; z-index:100;
+    height: 58px; padding: 0 32px;
+    display:flex; align-items:center; justify-content:space-between;
+    background: var(--white); border-bottom: 1px solid var(--border);
+  }
+  .nav-brand{ display:flex; align-items:center; gap:10px; }
+  .nav-mark{
+    width: 26px; height: 26px; border-radius: 6px;
+    background: var(--dark); color: var(--blue);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-weight:500; font-size:14px;
+  }
+  .nav-name{ font-weight:600; color: var(--dark); font-size:14px; letter-spacing:-0.01em;}
+  .nav-name b{ color: var(--blue); }
+  .nav-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px; color: var(--blue); letter-spacing:0.15em; text-transform:uppercase;
+  }
+
+  /* HERO */
+  .hero{
+    padding: 64px 40px 52px; text-align:center;
+    background: var(--white); border-bottom: 1px solid var(--border);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px; color: var(--red); letter-spacing:0.18em; text-transform:uppercase;
+    margin-bottom:20px;
+  }
+  .eyebrow::before, .eyebrow::after{
+    content:''; display:inline-block; width:20px; height:1px; background:var(--red);
+    vertical-align:middle; margin: 0 10px;
+  }
+  h1{
+    font-family:'Instrument Serif', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height:1.08; letter-spacing:-0.01em;
+    color: var(--dark); margin-bottom:16px;
+  }
+  h1 em{ color: var(--blue); font-style:italic; }
+  .subtitle{ font-size:15px; color: var(--light); max-width:580px; margin: 0 auto 28px; line-height:1.6; }
+  .pills{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .pill{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px; letter-spacing:0.12em; text-transform:uppercase;
+    padding:5px 12px; border-radius:20px;
+  }
+  .pill-blue{ background: var(--blue-lt); color: var(--blue); }
+  .pill-red{ background: var(--red-lt); color: var(--red); }
+
+  /* STATS */
+  .stats-bar{
+    display:grid; grid-template-columns: repeat(4, 1fr);
+    background: var(--white); border-bottom: 1px solid var(--border);
+  }
+  .stat{
+    padding:20px 24px; text-align:center;
+    border-right: 1px solid var(--border);
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .stat:last-child{ border-right:none; }
+  .stat-num{ font-size:22px; font-weight:700; color: var(--dark); }
+  .stat-lbl{
+    font-family:'JetBrains Mono', monospace;
+    font-size:8px; color: var(--light); letter-spacing:0.14em; text-transform:uppercase;
+  }
+
+  /* MAIN */
+  main{ max-width: 900px; margin: 0 auto; padding: 52px 40px 100px; }
+  .section{ margin-bottom: 60px; }
+  .section-hd{ display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+  .s-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px; color: var(--blue);
+    background: var(--blue-lt); border:1px solid var(--blue-mid);
+    padding:3px 9px; border-radius:3px;
+  }
+  .s-title{
+    font-size:11px; font-weight:600; color: var(--mid);
+    text-transform:uppercase; letter-spacing:0.1em;
+  }
+  .section-hd::after{ content:''; flex:1; height:1px; background: var(--border); }
+
+  .lead{ font-size:15px; color: var(--mid); line-height:1.75; margin-bottom:20px; }
+  .lead strong{ color: var(--dark); font-weight:600; }
+  h3{ font-size:20px; color: var(--dark); font-weight:600; margin-bottom:12px; letter-spacing:-0.01em;}
+
+  /* Split visual 80/20 */
+  .split-wrap{ margin: 8px 0 4px; }
+  .split-track{ height: 46px; border-radius:8px; overflow:hidden; display:flex; border:1px solid var(--border);}
+  .split-btc{ background: var(--dark); color: var(--white); flex-basis:80%;
+    display:flex; align-items:center; padding-left:20px; gap:10px; }
+  .split-eth{ background: var(--blue); color: var(--white); flex-basis:20%;
+    display:flex; align-items:center; justify-content:center; }
+  .split-lbl{ font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; opacity:0.8;}
+  .split-pct{ font-weight:700; font-size:16px; }
+  .split-cap{ display:flex; justify-content:space-between; margin-top:8px;
+    font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--light); letter-spacing:0.1em; text-transform:uppercase;}
+
+  /* Level bars */
+  .levels{ display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+  .level{
+    display:grid; grid-template-columns: 90px 1fr 54px;
+    align-items:center; gap:14px;
+    background: var(--white); border:1px solid var(--border); border-radius:8px;
+    padding:14px 18px;
+  }
+  .level-tag{ font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--dark); font-weight:500;
+    text-transform:uppercase; letter-spacing:0.05em;}
+  .level-tag small{ display:block; color:var(--light); font-size:8px; letter-spacing:0.1em; margin-top:2px;}
+  .level-bar-track{ height:12px; background: var(--bg); border-radius:6px; overflow:hidden; }
+  .level-bar{ height:100%; border-radius:6px; }
+  .level-pct{ text-align:right; font-weight:700; color: var(--dark); font-size:15px; }
+  .level-zone{
+    display:inline-block; font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:500; color: var(--dark);
+    background: var(--bg); border:1px solid var(--border);
+    padding:3px 9px; border-radius:4px; white-space:nowrap;
+  }
+  .level{ grid-template-columns: 96px 120px 1fr 54px; }
+  @media (max-width:720px){ .level{ grid-template-columns: 70px 96px 1fr 42px; gap:8px; } .level-zone{ font-size:9px; padding:2px 6px;} }
+
+  /* Step cards */
+  .steps-grid{ display:flex; flex-direction:column; gap:8px; }
+  .step-card{
+    display:grid; grid-template-columns: 48px 1fr;
+    background: var(--white); border:1px solid var(--border); border-radius:8px; overflow:hidden;
+  }
+  .step-num{
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Instrument Serif', serif; font-style:italic; font-size:20px; color:var(--blue);
+    background: var(--blue-lt); border-right:1px solid var(--border);
+  }
+  .step-content{ padding:14px 18px; }
+  .step-title{ font-size:12px; font-weight:600; color:var(--dark); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px; }
+  .step-desc{ font-size:12px; color:var(--mid); line-height:1.6; }
+
+  /* Restrictions */
+  .restrictions{ display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+  .rest-col{ background: var(--white); border:1px solid var(--border); border-radius:8px; padding:20px; }
+  .rest-title{ font-size:10px; font-weight:600; color:var(--dark); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px; }
+  .rest-item{ font-size:11px; color:var(--mid); line-height:1.55; margin-bottom:8px; }
+  .check{ color:var(--blue); font-weight:700; margin-right:6px; }
+  .cross{ color:var(--red); font-weight:700; margin-right:6px; }
+
+  /* Callout */
+  .callout{ padding:16px 20px; border-radius:6px; margin:20px 0; }
+  .callout-blue{ background: var(--blue-lt); border-left:3px solid var(--blue); }
+  .callout-red{ background: var(--red-lt); border-left:3px solid var(--red); }
+  .callout-label{ display:block; font-family:'JetBrains Mono', monospace; font-size:8px; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:6px; }
+  .callout-blue .callout-label{ color:var(--blue); }
+  .callout-red .callout-label{ color:var(--red); }
+  .callout p{ font-size:13px; color:var(--mid); line-height:1.7; margin:0; }
+
+  /* Deliverables */
+  .deliverables{ display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
+  .deliv-card{ background: var(--white); border:1px solid var(--border); border-radius:8px; padding:20px; position:relative; overflow:hidden; transition:transform 0.2s; }
+  .deliv-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:2.5px; background:var(--blue); transform:scaleX(0); transition:transform 0.2s; transform-origin:left; }
+  .deliv-card:hover::before{ transform:scaleX(1); }
+  .deliv-card:hover{ transform:translateY(-2px); }
+  .deliv-num{ font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--light); letter-spacing:0.12em; margin-bottom:8px; }
+  .deliv-title{ font-size:12px; font-weight:600; color:var(--dark); margin-bottom:6px; }
+  .deliv-desc{ font-size:11px; color:var(--mid); line-height:1.5; }
+
+  /* CTA */
+  .cta{ background: var(--dark); border-radius:12px; padding:44px 40px; text-align:center; margin-top:20px; }
+  .cta-eyebrow{ display:inline-block; font-family:'JetBrains Mono', monospace; font-size:9px;
+    color: var(--blue); background: rgba(255,92,57,0.14); border:1px solid rgba(255,92,57,0.3);
+    padding:5px 12px; border-radius:20px; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:18px; }
+  .cta h3{ color: var(--white); font-family:'Instrument Serif', serif; font-size:30px; font-weight:400; margin-bottom:10px; }
+  .cta h3 em{ color: var(--blue); font-style:italic; }
+  .cta p{ color:#b8b2bf; font-size:14px; max-width:480px; margin:0 auto 22px; line-height:1.6; }
+  .cta-btn{ display:inline-block; background: var(--blue); color:var(--white); font-weight:600; font-size:14px;
+    padding:13px 28px; border-radius:6px; text-decoration:none; letter-spacing:0.01em; }
+  .cta-hint{ display:block; margin-top:14px; font-family:'JetBrains Mono', monospace; font-size:9px; color:#78727f; letter-spacing:0.1em; text-transform:uppercase;}
+
+  /* FOOTER */
+  footer{ display:flex; align-items:center; justify-content:space-between; padding:24px 40px; background:var(--white); border-top:1px solid var(--border); }
+  .footer-brand{ display:flex; align-items:center; gap:10px; }
+  .footer-mark{ width:22px; height:22px; border-radius:5px; background:var(--dark); color:var(--blue);
+    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; }
+  .footer-name{ font-weight:600; font-size:13px; color:var(--dark); }
+  .footer-meta{ font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--light); letter-spacing:0.1em; text-transform:uppercase; }
+
+  .disclaimer{ max-width:900px; margin:0 auto; padding:0 40px 60px; }
+  .disclaimer p{ font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--light); line-height:1.8; letter-spacing:0.03em; }
+
+  @media (max-width: 720px){
+    .stats-bar{ grid-template-columns: repeat(2,1fr); }
+    .stat:nth-child(2){ border-right:none; }
+    .restrictions, .deliverables{ grid-template-columns: 1fr; }
+    .level{ grid-template-columns: 76px 1fr 46px; gap:10px; }
+    main{ padding: 40px 22px 80px; }
+    .hero{ padding: 48px 22px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-mark">D</div>
+    <span class="nav-name">Descentralizados<b>.</b></span>
+  </div>
+  <span class="nav-tag">Guía de valor</span>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">Estrategia de acumulación · Ciclo alcista</div>
+  <h1>El Método de Escalones<br><em>— Descentralizados</em></h1>
+  <p class="subtitle">Cómo repartir tu liquidez en compras planificadas por niveles, en lugar de vaciar toda tu munición de golpe. La diferencia entre reaccionar al mercado y tener un plan escrito antes de que se mueva.</p>
+  <div class="pills">
+    <span class="pill pill-blue">Sin FOMO</span>
+    <span class="pill pill-red">Compras por niveles</span>
+    <span class="pill pill-blue">BTC + ETH</span>
+    <span class="pill pill-red">Plan escrito</span>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><span class="stat-num">80/20</span><span class="stat-lbl">Reparto BTC · ETH</span></div>
+  <div class="stat"><span class="stat-num">5</span><span class="stat-lbl">Niveles de entrada</span></div>
+  <div class="stat"><span class="stat-num">0%</span><span class="stat-lbl">Compras por impulso</span></div>
+  <div class="stat"><span class="stat-num">100%</span><span class="stat-lbl">Decidido de antemano</span></div>
+</div>
+
+<main>
+
+  <!-- 00 -->
+  <div class="section">
+    <div class="section-hd"><span class="s-num">00</span><span class="s-title">La idea de fondo</span></div>
+    <p class="lead">La mayoría entra al mercado de una sola vez, con todo, justo cuando el precio "se siente" bien. Y ese momento casi nunca coincide con el mejor precio. <strong>El Método de Escalones invierte esa lógica:</strong> defines tus niveles y tus pesos antes de que el mercado se mueva, y dejas que sea el precio el que venga a buscar tus órdenes, no al revés.</p>
+    <p class="lead">No es adivinar el suelo. Es <strong>repartir tu entrada</strong> para que ningún nivel concentre todo tu riesgo, y para que las caídas dejen de darte miedo y empiecen a ser oportunidades que ya tenías planificadas.</p>
+
+    <div class="callout callout-blue">
+      <span class="callout-label">Por qué funciona</span>
+      <p>Cuando tienes el plan escrito, dejas de tomar decisiones con el estómago. La caída ya no es una sorpresa: es el nivel 2 de tu propio plan ejecutándose solo.</p>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section">
+    <div class="section-hd"><span class="s-num">01</span><span class="s-title">Primer reparto — el gran bloque</span></div>
+    <h3>80% al activo ancla · 20% al satélite</h3>
+    <p class="lead">Antes de pensar en precios, decides qué proporción de tu liquidez va a cada activo. La estructura base reparte el grueso al activo de mayor convicción (BTC) y una porción menor al satélite de mayor beta (ETH).</p>
+
+    <div class="split-wrap">
+      <div class="split-track">
+        <div class="split-btc">
+          <span class="split-pct">80%</span>
+          <span class="split-lbl">Activo ancla · BTC</span>
+        </div>
+        <div class="split-eth">
+          <span class="split-pct">20%</span>
+        </div>
+      </div>
+      <div class="split-cap">
+        <span>Bitcoin — núcleo de la posición</span>
+        <span>Ethereum — 20%</span>
+      </div>
+    </div>
+
+    <div class="callout callout-red">
+      <span class="callout-label">Regla de oro</span>
+      <p>El reparto se decide una vez y no se toca por emoción. Si el mercado cae, no cambias los porcentajes: ejecutas el plan que ya tenías.</p>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section">
+    <div class="section-hd"><span class="s-num">02</span><span class="s-title">Segundo reparto — escalones de BTC</span></div>
+    <h3>El 80% de BTC, en 3 niveles con peso creciente</h3>
+    <p class="lead">Aquí está la clave del método: dentro del bloque de BTC, <strong>no compras todo al mismo precio</strong>. Lo divides en 3 escalones y das más peso a los niveles más bajos. Así, si el mercado corrige fuerte, tu mayor compra cae justo en la mejor zona.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-tag">Nivel 1<small>precio más alto</small></div>
+        <div class="level-zone">$55.000</div>
+        <div class="level-bar-track"><div class="level-bar" style="width:20%; background: var(--light);"></div></div>
+        <div class="level-pct">20%</div>
+      </div>
+      <div class="level">
+        <div class="level-tag">Nivel 2<small>precio medio</small></div>
+        <div class="level-zone">$50.000</div>
+        <div class="level-bar-track"><div class="level-bar" style="width:100%; background: var(--blue);"></div></div>
+        <div class="level-pct">50%</div>
+      </div>
+      <div class="level">
+        <div class="level-tag">Nivel 3<small>precio más bajo</small></div>
+        <div class="level-zone">$45.000</div>
+        <div class="level-bar-track"><div class="level-bar" style="width:60%; background: var(--red);"></div></div>
+        <div class="level-pct">30%</div>
+      </div>
+    </div>
+
+    <div class="callout callout-blue">
+      <span class="callout-label">Lo que hace este reparto</span>
+      <p>El 80% de tu bloque de BTC (50% + 30%) se activa en las dos zonas más bajas — $50.000 y $45.000. Solo el 20% entra en la zona más alta. Compras poco arriba y fuerte abajo — sin tener que adivinar nada.</p>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section">
+    <div class="section-hd"><span class="s-num">03</span><span class="s-title">Tercer reparto — escalones de ETH</span></div>
+    <h3>El 20% de ETH, en 2 niveles iguales</h3>
+    <p class="lead">Para el satélite, el reparto es más simple: se parte en <strong>dos mitades iguales</strong> en dos niveles de precio. La primera mitad entra en la primera zona; la segunda espera a una corrección más profunda.</p>
+
+    <div class="levels">
+      <div class="level">
+        <div class="level-tag">Nivel 1<small>primera zona</small></div>
+        <div class="level-zone">$1.200</div>
+        <div class="level-bar-track"><div class="level-bar" style="width:100%; background: var(--blue);"></div></div>
+        <div class="level-pct">50%</div>
+      </div>
+      <div class="level">
+        <div class="level-tag">Nivel 2<small>zona profunda</small></div>
+        <div class="level-zone">$1.000</div>
+        <div class="level-bar-track"><div class="level-bar" style="width:100%; background: var(--dark);"></div></div>
+        <div class="level-pct">50%</div>
+      </div>
+    </div>
+
+    <div class="callout callout-red">
+      <span class="callout-label">Detalle importante</span>
+      <p>Si el mercado no llega a la zona más profunda ($1.000), esa mitad simplemente no se ejecuta y queda en liquidez. No pasa nada: el plan no te obliga a comprar a un precio que no querías.</p>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section">
+    <div class="section-hd"><span class="s-num">04</span><span class="s-title">Cómo aplicarlo tú</span></div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Define tu reparto entre activos</div>
+          <div class="step-desc">Decide qué porcentaje de tu liquidez va al ancla y cuánto al satélite. La convicción manda: el grueso al activo que mejor entiendes.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Marca tus niveles de precio</div>
+          <div class="step-desc">Elige 2-3 zonas de entrada por activo. No hace falta acertar el suelo exacto — solo repartir por rangos donde estarías cómodo comprando.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Asigna más peso abajo</div>
+          <div class="step-desc">Da el mayor porcentaje a los niveles más bajos. Tu compra más grande debe caer donde el precio está más barato, no más caro.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Deja las órdenes puestas</div>
+          <div class="step-desc">Configura tus órdenes límite y olvídate. El plan trabaja por ti mientras tú no miras la pantalla cada cinco minutos.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section">
+    <div class="section-hd"><span class="s-num">05</span><span class="s-title">Sí vs. no</span></div>
+    <div class="restrictions">
+      <div class="rest-col">
+        <div class="rest-title">Lo que sí funciona</div>
+        <div class="rest-item"><span class="check">✓</span> Decidir los porcentajes antes de que el mercado se mueva.</div>
+        <div class="rest-item"><span class="check">✓</span> Concentrar el mayor peso en los niveles más bajos.</div>
+        <div class="rest-item"><span class="check">✓</span> Aceptar que algún nivel puede no ejecutarse nunca.</div>
+        <div class="rest-item"><span class="check">✓</span> Escribir el plan y respetarlo aunque dé vértigo.</div>
+      </div>
+      <div class="rest-col">
+        <div class="rest-title">Lo que no funciona</div>
+        <div class="rest-item"><span class="cross">✕</span> Entrar con todo de golpe porque "esta vez sí es el suelo".</div>
+        <div class="rest-item"><span class="cross">✕</span> Cambiar los pesos a mitad de camino por miedo o euforia.</div>
+        <div class="rest-item"><span class="cross">✕</span> Poner tu compra más grande en el nivel más caro.</div>
+        <div class="rest-item"><span class="cross">✕</span> Improvisar cada decisión mirando el gráfico en directo.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section">
+    <div class="section-hd"><span class="s-num">06</span><span class="s-title">Lo que te llevas</span></div>
+    <div class="deliverables">
+      <div class="deliv-card">
+        <div class="deliv-num">01</div>
+        <div class="deliv-title">Un reparto claro</div>
+        <div class="deliv-desc">Ancla vs. satélite decidido de antemano, sin dudas en el momento caliente.</div>
+      </div>
+      <div class="deliv-card">
+        <div class="deliv-num">02</div>
+        <div class="deliv-title">Escalones con peso</div>
+        <div class="deliv-desc">Más munición abajo, menos arriba. Compras mejor sin adivinar el suelo.</div>
+      </div>
+      <div class="deliv-card">
+        <div class="deliv-num">03</div>
+        <div class="deliv-title">Cero FOMO</div>
+        <div class="deliv-desc">Un plan escrito que trabaja solo mientras tú duermes tranquilo.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <span class="cta-eyebrow">Masterclass gratuita · Plazas limitadas</span>
+    <h3>Mientras esperas a comprar,<br>¿tu liquidez <em>trabaja o duerme?</em></h3>
+    <p>Tener el plan de escalones listo está muy bien. Pero el precio puede tardar meses en llegar a tus zonas de compra — y ese dinero parado no rinde nada. En esta masterclass gratuita te enseñamos las estrategias exactas que estamos usando <strong>hoy</strong> para generar entre un <strong>5% y un 15% mensual</strong> con esa liquidez, mientras esperamos con calma a ejecutar nuestras compras en BTC y ETH.</p>
+    <a class="cta-btn" href="https://cryptoprofe.com/registrovsl?utm_source=instagram&amp;utm_medium=social&amp;utm_campaign=escalones">Ver la masterclass gratis</a>
+    <span class="cta-hint">Acceso inmediato · Sin coste</span>
+  </div>
+
+</main>
+
+<div class="disclaimer">
+  <p>Este recurso es contenido educativo. No constituye asesoramiento financiero ni una recomendación de inversión. Los porcentajes mostrados son un ejemplo de estructura de reparto, no una garantía de resultados. Invierte solo lo que puedas permitirte y haz tu propia investigación.</p>
+</div>
+
+<footer>
+  <div class="footer-brand">
+    <div class="footer-mark">D</div>
+    <span class="footer-name">Descentralizados.</span>
+  </div>
+  <span class="footer-meta">El Método de Escalones · descentralizados.club</span>
+</footer>
+
+</body>
+</html>
